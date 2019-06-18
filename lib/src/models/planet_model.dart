@@ -1,3 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'package:stars/src/services/planet_repository.dart';
+
 class Planets {
   int _count;
   String _next;
@@ -138,4 +142,26 @@ class PlanetModel {
     data['url'] = this._url;
     return data;
   }
+}
+
+class PlanetScoped extends Model {
+  PlanetScoped(this._planetRepository);
+  final PlanetRepository _planetRepository;
+
+  bool _isLoading = false;
+  Planets _planets;
+
+  Planets get planets => _planets;
+  bool get isLoading => _isLoading;
+
+  void loadPlanetData() {
+    _isLoading = true;
+    notifyListeners();
+    _planetRepository.getPlanet().then((planets) {
+      _planets = planets;
+      _isLoading = false;
+      notifyListeners();
+    });
+  }
+
 }
